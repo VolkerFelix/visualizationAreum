@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Areum Health Data Visualization{% endblock %}
+
+{% block content %}
+<div class="header-container mb-4">
+    <h2>Areum Health Data Dashboard</h2>
+    <div>
+        <a href="{{ url_for('dashboard.refresh') }}" class="btn btn-outline-primary me-2">Refresh Data</a>
+        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger">Logout</a>
+    </div>
+</div>
+
+{% if datasets %}
+<div class="mb-4">
+    <form method="GET" action="{{ url_for('dashboard.index') }}">
+        <div class="row align-items-end">
+            <div class="col-md-9">
+                <label for="dataset" class="form-label">Select Dataset:</label>
+                <select class="form-select" id="dataset" name="dataset" onchange="this.form.submit()">
+                    {% for dataset in datasets %}
+                    <option value="{{ dataset.id }}" {% if dataset.id == selected_dataset.id %}selected{% endif %}>
+                        {{ dataset.created_at }} - {{ dataset.data_type }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row metrics-card">
+    <div class="col-md-4 metric-item">
+        <div class="metric-value">{{ metrics.avg_intensity|round(1) }}%</div>
+        <div class="metric-label">Activity Intensity</div>
+    </div>
+    <div class="col-md-4 metric-item">
+        <div class="metric-value">{{ metrics.duration }} min</div>
+        <div class="metric-label">Duration</div>
+    </div>
+    <div class="col-md-4 metric-item">
+        <div class="metric-value">{{ metrics.peak_magnitude }}</div>
+        <div class="metric-label">Peak Movement (g)</div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs mb-3" id="chartTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="xyz-tab" data-bs-toggle="tab" data-bs-target="#xyz-content" type="button" role="tab" aria-controls="xyz-content" aria-selected="true">X/Y/Z Acceleration</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="magnitude-tab" data-bs-toggle="tab" data-bs-target="#magnitude-content" type="button" role="tab" aria-controls="magnitude-content" aria-selected="false">Movement Magnitude</button>
+    </li>
+</ul>
+
+<div class="tab-content" id="chartTabsContent">
+    <div class="tab-pane fade show active" id="xyz-content" role="tabpanel" aria-labelledby="xyz-tab">
+        <div class="card">
+            <div class="card-header">
+                <h5>Acceleration Components</h5>
+            </div>
+            <div class="card-body">
+                <div id="xyz-chart">{{ acceleration_chart|safe }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="magnitude-content" role="tabpanel" aria-labelledby="magnitude-tab">
+        <div class="card">
+            <div class="card-header">
+                <h5>Movement Intensity</h5>
+            </div>
+            <div class="card-body">
+                <div id="magnitude-chart">{{ magnitude_chart|safe }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-info">
+    No health data found. Please upload some data first.
+</div>
+{% endif %}
+{% endblock %}
