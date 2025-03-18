@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   visualization:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - FLASK_APP=run.py
       - FLASK_ENV=production
@@ -20,12 +18,16 @@ services:
       - areum-network
 
   backend:
-    image: areum-backend:latest
+    image: ghcr.io/volkerfelix/backendareum:latest
     ports:
       - "8080:8080"
     environment:
       - APP_ENVIRONMENT=production
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/areum_db
+      - POSTGRES__DATABASE__USER=postgres
+      - POSTGRES__DATABASE__PASSWORD=postgres
+      - APP__APPLICATION__USER=app_user
+      - APP__APPLICATION__PASSWORD=password
     depends_on:
       - postgres
     networks:
