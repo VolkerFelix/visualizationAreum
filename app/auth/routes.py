@@ -38,8 +38,17 @@ def register():
         success, message = register_user(username, password, email)
         
         if success:
-            flash('Registration successful! You can now log in.', 'success')
-            return redirect(url_for('auth.login'))
+            # If registration successful, automatically log the user in
+            login_success, token, login_error = login_user(username, password)
+            
+            if login_success:
+                session['token'] = token
+                flash('Account created successfully!', 'success')
+                return redirect(url_for('dashboard.index'))
+            else:
+                # Fall back to manual login if auto-login fails
+                flash('Registration successful! Please log in.', 'success')
+                return redirect(url_for('auth.login'))
         else:
             flash(f'Registration failed: {message}', 'danger')
     
