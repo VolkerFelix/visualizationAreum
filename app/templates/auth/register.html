@@ -1,27 +1,32 @@
 {% extends "base.html" %}
 
-{% block title %}Login - Areum Health Data Visualization{% endblock %}
+{% block title %}Register - Areum Health Data Visualization{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
-                <h4>Login to View Your Health Data</h4>
+                <h4>Create an Account</h4>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ url_for('auth.login') }}">
+                <form method="POST" action="{{ url_for('auth.register') }}">
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="password" required>
+                        <div class="form-text">Password must be at least 8 characters long.</div>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                        <a href="{{ url_for('auth.register') }}" class="text-decoration-none">Need an account? Register</a>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Register</button>
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-outline-secondary">Back to Login</a>
                     </div>
                 </form>
             </div>

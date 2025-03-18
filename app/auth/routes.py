@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for, flash, session
 from . import auth
-from ..utils.api import login_user
+from ..utils.api import login_user, register_user
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -17,6 +17,33 @@ def login():
             flash(error or 'Invalid credentials', 'danger')
     
     return render_template('auth/login.html')
+
+@auth.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        email = request.form.get('email')
+        
+        # Validate input
+        if not username or not password or not email:
+            flash('All fields are required', 'danger')
+            return render_template('auth/register.html')
+            
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long', 'danger')
+            return render_template('auth/register.html')
+            
+        # Register the user
+        success, message = register_user(username, password, email)
+        
+        if success:
+            flash('Registration successful! You can now log in.', 'success')
+            return redirect(url_for('auth.login'))
+        else:
+            flash(f'Registration failed: {message}', 'danger')
+    
+    return render_template('auth/register.html')
 
 @auth.route('/logout')
 def logout():
